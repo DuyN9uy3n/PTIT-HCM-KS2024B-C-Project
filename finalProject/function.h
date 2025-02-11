@@ -1,36 +1,37 @@
-#ifndef FUNCTION_H  
-#define FUNCTION_H  
+#ifndef FUNCTION_H
+#define FUNCTION_H
 
-#include "datatype.h"  
+#include "datatype.h"
 
-// menu chinh 
-void displayMainMenu();  
+// Menu chính
+void displayMainMenu();
 
-// hien thi ds user
-void displayUserList();  
+// Hiển thị danh sách user
+void displayUserList();
 
-// them user
-void addUser();  
+// Thêm user
+void addUser();
 
-// khoa user
-void toggleUserStatus();  
+// Khóa/Mở khóa user
+void toggleUserStatus();
 
-// hien thi user theo id
-void displayUserDetails(char *userId);  
+// Hiển thị user theo ID
+void displayUserDetails(char *userId);
 
-// sap xep ds user
-void sortUserList();  
+// Sắp xếp danh sách user
+ void sortUserList();
 
-// Htim kiem user theo ten
-void searchUserByName(char *name);  
+// Tìm kiếm user theo tên
+void searchUserByName(char *name);
 
-// kt du lieu 
-bool validateUserInput(struct User user);  
+// Kiểm tra dữ liệu user
+bool validateUserInput(struct User user);
 
-// luu tep du lieu
-void saveUserData();  
 
-// doc du lieu 
-void loadUserData();  
+// Lưu dữ liệu user
+void saveUserData();
+
+// Đọc dữ liệu user
+void loadUserData();
 
 #endif // FUNCTION_H
