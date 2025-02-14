@@ -6,32 +6,31 @@
 // Menu chính
 void displayMainMenu();
 
-// Hiển thị danh sách user
+// Hiển thị danh sách người dùng
 void displayUserList();
 
-// Thêm user
+// Thêm người dùng
 void addUser();
 
-// Khóa/Mở khóa user
+// Khóa/Mở khóa người dùng
 void toggleUserStatus();
 
-// Hiển thị user theo ID
+// Hiển thị thông tin người dùng theo ID
 void displayUserDetails(char *userId);
 
-// Sắp xếp danh sách user
- void sortUserList();
+// Sắp xếp danh sách người dùng
+void sortUserList();
 
-// Tìm kiếm user theo tên
+// Tìm kiếm người dùng theo tên
 void searchUserByName(char *name);
 
-// Kiểm tra dữ liệu user
+// Kiểm tra dữ liệu người dùng
 bool validateUserInput(struct User user);
 
-
-// Lưu dữ liệu user
+// Lưu dữ liệu người dùng
 void saveUserData();
 
-// Đọc dữ liệu user
+// Đọc dữ liệu người dùng
 void loadUserData();
 
 #endif // FUNCTION_H

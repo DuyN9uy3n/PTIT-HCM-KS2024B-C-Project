@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;16;0;0;0
-UnitCount=4
+UnitCount=5
 
 [VersionInfo]
 Major=1
@@ -90,16 +90,6 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=0
 
-[Unit5]
-FileName=datatype.h
-CompileCpp=0
-Folder=include
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit6]
 FileName=function.h
 CompileCpp=0
@@ -116,6 +106,15 @@ CompileCpp=0
 Folder=src
 Compile=1
 Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit5]
+FileName=data\user.txt
+Folder=data
+Compile=0
+Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
