@@ -26,7 +26,7 @@ void inputPassword(char* password, int maxLength) {
 }  
 
 int main() {  
-    loadUserData();  // Load dữ liệu người dùng từ file  
+    loadUserData();   
 
     int role, choice;  
     while (1) {  

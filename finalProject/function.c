@@ -8,14 +8,180 @@ struct User users[100];
 int userCount = 0;
 
 
+//ham chuyen tien
+void transferMoney(struct User *sender) {
+    char receiverId[10]; //id nguoi nhan 
+    double amount;
+    char transferId[10]; //id giao dich
+    
+    printf("\nEnter transaction ID: ");
+    scanf("%s", transferId);
+    
+    printf("Enter receiver's User ID: ");
+    scanf("%s", receiverId);
+
+    // duyet qua ds user tim ID trung ID nguoi nhan 
+    struct User *receiver = NULL;
+	// gan ptr receiver tro den tai khoan nguoi nhan neu tim thay
+    for (int i = 0; i < userCount; i++) {
+        if (strcmp(users[i].userId, receiverId) == 0) {
+            receiver = &users[i];
+            break;
+        }
+    }
+
+    if (receiver == NULL) {
+        printf("Error: Receiver's account does not exist.\n");
+        return;
+    }
+
+    printf("Enter the amount to transfer: ");
+    scanf("%lf", &amount);
+    
+    if (amount <= 0) {
+        printf("Amount must be greater than zero.\n");
+        return;
+    }
+
+    if (amount > sender->balance) {
+        printf("Insufficient funds.\n");
+        return;
+    }
+
+    // Giảm số dư tài khoản người gửi
+    sender->balance -= amount;
+
+    // Tăng số dư tài khoản người nhận
+    receiver->balance += amount;
+
+    // Cập nhật giao dịch cho người gửi
+    struct Transaction senderTransaction;
+    strcpy(senderTransaction.transferId, transferId);
+    strcpy(senderTransaction.type, "transfer");
+    senderTransaction.amount = amount;
+    senderTransaction.transactionDate = (struct Date){ 18, 2, 2025 };  // Set the current date, can be dynamic
+    strcpy(senderTransaction.message, "Transferred to: ");
+    strcat(senderTransaction.message, receiverId);
+
+    // Thêm giao dịch vào lịch sử của người gửi
+    for (int i = 0; i < 100; i++) {
+        if (sender->transactionHistory[i].amount == 0) {
+            sender->transactionHistory[i] = senderTransaction;
+            break;
+        }
+    }
+
+    // Cập nhật giao dịch cho người nhận
+    struct Transaction receiverTransaction;
+    strcpy(receiverTransaction.transferId, transferId);
+    strcpy(receiverTransaction.type, "transfer");
+    receiverTransaction.amount = amount;
+    receiverTransaction.transactionDate = (struct Date){ 18, 2, 2025 };  // Set the current date, can be dynamic
+    strcpy(receiverTransaction.message, "Received from: ");
+    strcat(receiverTransaction.message, sender->userId);
+
+    // Thêm giao dịch vào lịch sử của người nhận
+    for (int i = 0; i < 100; i++) {
+        if (receiver->transactionHistory[i].amount == 0) {
+            receiver->transactionHistory[i] = receiverTransaction;
+            break;
+        }
+    }
+
+    printf("Transfer successful. Your new balance is: %.2f\n", sender->balance);
+    printf("Receiver's new balance is: %.2f\n", receiver->balance);
+    
+    // Lưu lại dữ liệu người dùng
+    saveUserData();
+}
+
+
+void depositMoney(struct User *user) {
+    double amount;
+    char transferId[10];
+    printf("\nEnter transaction ID: ");
+    scanf("%s", transferId);
+    
+    printf("Enter the amount to deposit: ");
+    scanf("%lf", &amount);
+    
+    if (amount <= 0) {
+        printf("Amount must be greater than zero.\n");
+        return;
+    }
+
+    user->balance += amount;
+
+    struct Transaction newTransaction;
+    strcpy(newTransaction.transferId, transferId);
+    strcpy(newTransaction.type, "deposit");
+    newTransaction.amount = amount;
+    newTransaction.transactionDate = (struct Date){ 18, 2, 2025 }; 
+    strcpy(newTransaction.message, "Deposit transaction successful");
+
+    for (int i = 0; i < 100; i++) {
+        if (user->transactionHistory[i].amount == 0) {
+            user->transactionHistory[i] = newTransaction;
+            break;
+        }
+    }
+
+    printf("Deposit successful. Your new balance is: %.2f\n", user->balance);
+}
+
+
+void withdrawMoney(struct User *user) {
+    double amount;
+    char transferId[10];
+    
+    printf("\nEnter transaction ID: ");
+    scanf("%s", transferId);
+
+    printf("Enter the amount to withdraw: ");
+    scanf("%lf", &amount);
+    
+    if (amount <= 0) {
+        printf("Amount must be greater than zero.\n");
+        return;
+    }
+
+    if (amount > user->balance) {
+        printf("Insufficient funds.\n");
+        return;
+    }
+
+    user->balance -= amount;
+
+    struct Transaction newTransaction;
+    strcpy(newTransaction.transferId, transferId);
+    strcpy(newTransaction.type, "withdraw");
+    newTransaction.amount = amount;
+    newTransaction.transactionDate = (struct Date){ };  
+    strcpy(newTransaction.message, "Withdrawal transaction successful");
+
+    for (int i = 0; i < 100; i++) {
+        if (user->transactionHistory[i].amount == 0) {
+            user->transactionHistory[i] = newTransaction;
+            break;
+        }
+    }
+
+    printf("Withdrawal successful. Your new balance is: %.2f\n", user->balance);
+}
+
+
+
 void displayAccountMenu(struct User *loggedInUser) {
     int choice;
     do {
         printf("\n*** ACCOUNT MANAGEMENT MENU ***\n");
         printf("===================================\n");
         printf("[1] View Account Details\n");
-        printf("[2] Edit Personal Information\n");
-        printf("[3] Exit\n");
+        printf("[2] Deposit Money\n");
+        printf("[3] Withdraw Money\n");
+        printf("[4] Transfer Money\n");  // Thêm chức năng chuyển tiền
+        printf("[5] Edit Personal Information\n");
+        printf("[6] Exit\n");
         printf("===================================\n");
         printf("Enter Your Choice: ");
         scanf("%d", &choice);
@@ -27,16 +193,29 @@ void displayAccountMenu(struct User *loggedInUser) {
                 break;
             case 2:
                 system("cls");
-                editUserInfo(loggedInUser);
+                depositMoney(loggedInUser);
                 break;
             case 3:
+                system("cls");
+                withdrawMoney(loggedInUser);
+                break;
+            case 4:
+                system("cls");
+                transferMoney(loggedInUser);  // Thực hiện chuyển tiền
+                break;
+            case 5:
+                system("cls");
+                editUserInfo(loggedInUser);
+                break;
+            case 6:
                 printf("Exiting Account Management...\n");
                 break;
             default:
                 printf("Invalid choice! Please try again.\n");
         }
-    } while (choice != 3);
+    } while (choice != 6);
 }
+
 
 
 void displayAccountDetails(struct User *user) {
@@ -91,7 +270,7 @@ void editUserInfo(struct User *user) {
         getchar(); 
 
         switch (choice) {
-            case 1: { // Đổi mật khẩu
+            case 1: {
                 char oldPassword[20], newPassword[20], confirmPassword[20];
                 int passwordMatched = 0;
 
@@ -122,9 +301,8 @@ void editUserInfo(struct User *user) {
                     if (strcmp(newPassword, confirmPassword) != 0) {
                         printf("Passwords do not match! Please try again.\n");
                     } else {
-                        // Cập nhật mật khẩu mới
                         strcpy(user->password, newPassword);
-                        saveUserData(); // Lưu mật khẩu mới
+                        saveUserData();
                         passwordConfirmed = 1;
                     }
                 }
@@ -133,7 +311,7 @@ void editUserInfo(struct User *user) {
                 break;
             }
 
-            case 2: { // Cập nhật thông tin cá nhân  
+            case 2: {
                 char temp[100];  
                 printf("\nCurrent Information:\n");  
                 printf("Name: %s\n", user->name);  
@@ -145,7 +323,7 @@ void editUserInfo(struct User *user) {
                     printf("\nEnter new Name (or press Enter to keep current): ");  
                     fgets(temp, sizeof(temp), stdin);  
                     temp[strcspn(temp, "\n")] = 0;  
-                    if (strlen(temp) > 0) {  // Chỉ cập nhật nếu tên không để trống  
+                    if (strlen(temp) > 0) { 
                         if (!isValidName(temp)) {  
                             printf("Name cannot contain numbers!\n");  
                             continue;  
@@ -154,7 +332,6 @@ void editUserInfo(struct User *user) {
                     }  
                 } while (strlen(temp) == 0 && printf("Name cannot be empty! Please enter again.\n"));  
 
-                // Cập nhật email  
                 do {  
                     printf("Enter new Email (or press Enter to keep current): ");  
                     fgets(temp, sizeof(temp), stdin);  
@@ -268,6 +445,8 @@ void saveUserData() {
     fclose(file);
     printf("User data saved successfully!\n");
 }
+
+
 
 
 
@@ -473,8 +652,7 @@ void addUser() {
             printf("Email cannot be empty!\n");  
             continue;  
         }  
-
-        // Nhập ngày sinh  
+ 
         printf("Enter Date of Birth (DD MM YYYY): ");  
         scanf("%d %d %d", &newUser.dateOfBirth.day, &newUser.dateOfBirth.month, &newUser.dateOfBirth.year);  
         
@@ -485,19 +663,19 @@ void addUser() {
             continue;  
         }  
 
-        valid = 1; // Dữ liệu hợp lệ  
+        valid = 1;
     }  
 
-    newUser.status = 0;  // Trạng thái "Mở"  
-    strcpy(newUser.password, newUser.phone);  // Mật khẩu mặc định là số điện thoại  
+    newUser.status = 0;
+    strcpy(newUser.password, newUser.phone);   
 
     if (isDuplicateUser(newUser)) {  
         printf("User ID, phone number, or email is already taken!\n");  
         return;  
     }  
     
-    users[userCount++] = newUser;  // Thêm người dùng vào danh sách  
-    saveUserData();  // Lưu dữ liệu vào file   
+    users[userCount++] = newUser; 
+    saveUserData();  
 }
 
 
