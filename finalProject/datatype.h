@@ -30,7 +30,6 @@ struct User {
     struct Transaction transactionHistory[100];
 };
 
-// Khai báo mảng users và biến userCount là toàn cục
 extern struct User users[100];
 extern int userCount;
 

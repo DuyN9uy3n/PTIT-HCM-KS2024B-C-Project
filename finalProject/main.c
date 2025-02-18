@@ -1,29 +1,28 @@
-#include <stdio.h>  
-#include <stdlib.h>  
-#include <string.h>  
-#include "function.h"  
-#include <conio.h>  
-
-// Function to input password while displaying asterisks  
-void inputPassword(char* password, int maxLength) {  
-    char ch;  
-    int i = 0;  
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "function.h"
+#include <conio.h>
+ 
+void inputPassword(char* password, int maxLength) {
+    char ch;
+    int i = 0;
     
-    while (1) {  
-        ch = getch();  // Đọc ký tự mà không hiển thị  
-        if (ch == '\r')  // Nhấn Enter (mã ASCII 13)  
-            break;  
-        else if (ch == '\b') {  // Nếu nhấn Backspace  
+    while (1) {
+        ch = getch();  
+        if (ch == '\r') 
+            break;
+        else if (ch == '\b') {   
             if (i > 0) {  
                 i--;  
-                printf("\b \b");  // Xóa dấu * vừa in  
+                printf("\b \b");   
             }  
         } else if (i < maxLength - 1) {  
             password[i++] = ch;  
-            printf("*");  // Hiển thị dấu *  
+            printf("*");  
         }  
     }  
-    password[i] = '\0';  // Kết thúc chuỗi  
+    password[i] = '\0';
 }  
 
 int main() {  
@@ -31,7 +30,6 @@ int main() {
 
     int role, choice;  
     while (1) {  
-        // Màn hình login  
         printf("\n*** BANK MANAGEMENT SYSTEM ***\n");  
         printf("============================\n");  
         printf("[1] Admin\n");  
@@ -41,25 +39,20 @@ int main() {
         printf("Enter Your Choice: ");  
         scanf("%d", &role);  
         
-        // Clear the input buffer to avoid reading leftover characters  
         while (getchar() != '\n');  
 
-        // Kiểm tra quyền truy cập  
         if (role == 1) {  // Admin login  
             char email[50], password[20];  
             printf("\nEmail: ");  
-            scanf("%s", email);  // Để tránh lỗi khoảng trắng, có thể thay bằng fgets  
+            scanf("%s", email);  
             printf("Password: ");  
-            inputPassword(password, sizeof(password));  // Gọi hàm nhập mật khẩu  
+            inputPassword(password, sizeof(password));  
 
-            // Kiểm tra thông tin đăng nhập của Admin  
             if (strcmp(email, "admin@gmail.com") != 0 || strcmp(password, "admin123") != 0) {  
                 printf("Login failed! Please try again.\n");  
-                continue;  // Quay lại vòng lặp login  
+                continue;  
             }  
-            system("cls"); // Clear screen  
-
-            // Menu Admin  
+            system("cls");
             do {  
                 printf("\n*** ADMIN MENU ***\n");  
                 printf("============================\n");  
@@ -72,103 +65,70 @@ int main() {
                 printf("[7] Exit\n");  
                 printf("============================\n");  
                 printf("Enter Your Choice: ");  
-                
-                // Xử lý nhập liệu và kiểm tra  
-                if (scanf("%d", &choice) != 1) {  
-                    while (getchar() != '\n');  // Xử lý ký tự không hợp lệ trong bộ đệm  
-                    printf("Invalid input! Please enter a valid number.\n");  
-                    continue;  // Quay lại vòng lặp menu  
-                }  
-
-                // Tái sử dụng menu admin  
+                scanf("%d", &choice);  
                 switch (choice) {  
                     case 1:  
                         system("cls");  
                         addUser();  
-                        saveUserData(); // Thêm người dùng  
+                        saveUserData();  
                         break;  
                     case 2:  
                         system("cls");  
-                        displayUserList();  // Hiển thị danh sách người dùng  
+                        displayUserList();  
                         break;  
                     case 3:  
                         system("cls");  
-                        toggleUserStatus();  // Khóa/Mở khóa người dùng  
+                        toggleUserStatus();  
                         break;  
-                    case 4: {  
+                    case 4:  
+                        system("cls");  
                         char searchName[50];  
                         printf("Enter name to search: ");  
                         scanf("%s", searchName);  
-                        system("cls");  
-                        searchUserByName(searchName);  // Tìm kiếm người dùng theo tên  
+                        searchUserByName(searchName);  
                         break;  
-                    }  
-                    case 5: {  
+                    case 5:  
+                        system("cls");  
                         char userId[10];  
                         printf("Enter User ID: ");  
                         scanf("%s", userId);  
-                        system("cls");  
-                        displayUserDetails(userId);  // Hiển thị chi tiết người dùng theo ID  
+                        displayUserDetails(userId);  
                         break;  
-                    }  
                     case 6:  
                         system("cls");  
-                        sortUserList();  // Sắp xếp danh sách người dùng theo ID  
+                        sortUserList();  
                         break;  
                     case 7:  
-                        system("cls");  
-                        saveUserData();  // Lưu dữ liệu người dùng  
+                        system("cls");   
                         printf("Exiting Admin Menu...\n");  
-                        return 0;  // Thoát chương trình  
+                        return 0;  
                     default:  
                         printf("Invalid choice! Please try again.\n");  
                 }  
-
-                // Quay lại menu chính hoặc thoát chương trình  
-                printf("\n[1] Return to Admin Menu\n");  
-                printf("[0] Exit\n");  
-                int exitChoice;  
-                printf("Enter choice: ");  
-                if (scanf("%d", &exitChoice) != 1) {  
-                    while (getchar() != '\n');  // Clear invalid input  
-                    printf("Invalid input! Please enter a valid number.\n");  
-                    continue;  
-                }  
-
-                if (exitChoice == 0) {  
-                    saveUserData();  
-                    return 0;  // Exit the program  
-                } else {  
-                    system("cls");  // Clear màn hình và quay lại menu Admin  
-                }  
-
-            } while (choice != 7); // Lặp lại menu cho đến khi chọn thoát  
+            } while (choice != 7);  
         } else if (role == 2) {  // User login  
-            char email[50], phone[12];  
-            printf("\nEnter Email: ");  
-            scanf("%s", email);  // Để tránh lỗi khoảng trắng, có thể thay bằng fgets  
-            printf("Enter Pass: ");  
-            inputPassword(phone, sizeof(phone));  // Gọi hàm nhập mật khẩu  
+    char email[50], phone[12];
+    printf("\nEnter Email: ");
+    scanf("%s", email);
+    printf("Enter Pass: ");
+    inputPassword(phone, sizeof(phone));
 
-            // Kiểm tra thông tin đăng nhập của User  
-            int found = 0;  
-            for (int i = 0; i < userCount; i++) {  
-                if (strcmp(users[i].email, email) == 0 && strcmp(users[i].phone, phone) == 0) {  
-                    found = 1;  
-                    printf("\nLogin Successful!\n");  
-                    // Kiểm tra trạng thái khóa tài khoản  
-                    if (users[i].status) {  
-                        printf("Your account is locked.\n");  
-                    } else {  
-                        printf("Your account is open.\n");  
-                    }  
-                    break;  
-                }  
-            }  
-
-            if (!found) {  
-                printf("Invalid login. Please check your email and phone number.\n");  
-            }
+    struct User *loggedInUser = NULL;
+    for (int i = 0; i < userCount; i++) {
+        if (strcmp(users[i].email, email) == 0 && strcmp(users[i].phone, phone) == 0) {
+            loggedInUser = &users[i];
+            printf("\nLogin Successful!\n");
+            break;
         }
     }
+
+    if (loggedInUser == NULL) {
+        printf("Invalid login. Please check your email and phone number.\n");
+    } else if (loggedInUser->status) {
+        printf("Your account is locked.\n");
+    } else {
+        displayAccountMenu(loggedInUser);
+    }
+}
+    }  
 }

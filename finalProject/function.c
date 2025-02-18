@@ -8,6 +8,198 @@ struct User users[100];
 int userCount = 0;
 
 
+void displayAccountMenu(struct User *loggedInUser) {
+    int choice;
+    do {
+        printf("\n*** ACCOUNT MANAGEMENT MENU ***\n");
+        printf("===================================\n");
+        printf("[1] View Account Details\n");
+        printf("[2] Edit Personal Information\n");
+        printf("[3] Exit\n");
+        printf("===================================\n");
+        printf("Enter Your Choice: ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1:
+                system("cls");
+                displayAccountDetails(loggedInUser);
+                break;
+            case 2:
+                system("cls");
+                editUserInfo(loggedInUser);
+                break;
+            case 3:
+                printf("Exiting Account Management...\n");
+                break;
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    } while (choice != 3);
+}
+
+
+void displayAccountDetails(struct User *user) {
+    printf("\n================ Account Details ================\n");
+    printf("User ID      : %s\n", user->userId);
+    printf("Name         : %s\n", user->name);
+    printf("Email        : %s\n", user->email);
+    printf("Phone        : %s\n", user->phone);
+    printf("Status       : %s\n", user->status ? "Locked" : "Open");
+    printf("Balance      : %.2f\n", user->balance);
+    printf("Username     : %s\n", user->username);
+
+    printf("\n--- Transaction History ---\n");
+    printf("===============================================\n");
+    
+    int hasTransaction = 0;
+//    for (int i = 0; i < 100; i++) {
+//        if (user->transactionHistory[i].amount > 0) {
+//            printf("Transaction ID: %s | To: %s | Amount: %.2f | Type: %s | Date: %02d-%02d-%04d\n",
+//                   user->transactionHistory[i].transferId,
+//                   user->transactionHistory[i].receivingId,
+//                   user->transactionHistory[i].amount,
+//                   user->transactionHistory[i].type,
+//                   user->transactionHistory[i].transactionDate.day,
+//                   user->transactionHistory[i].transactionDate.month,
+//                   user->transactionHistory[i].transactionDate.year);
+//            hasTransaction = 1;
+//        }
+//    }
+
+    if (!hasTransaction) {
+        printf("No transaction history found.\n");
+    }
+
+    printf("===============================================\n");
+}
+
+
+
+void editUserInfo(struct User *user) {  
+    int choice;  
+    do {  
+        printf("\n*** Edit Account Information ***\n");  
+        printf("===================================\n");  
+        printf("[1] Change Password\n");  
+        printf("[2] Update Personal Information\n");  
+        printf("[3] Exit\n");  
+        printf("===================================\n");  
+        printf("Enter Your Choice: ");  
+        
+        scanf("%d", &choice);  
+        getchar(); 
+
+        switch (choice) {  
+            case 1: { // Đổi mật khẩu  
+                char oldPassword[20], newPassword[20], confirmPassword[20];  
+                int passwordMatched = 0;  
+
+                printf("\nYour current password is your phone number.\n");  
+
+                while (!passwordMatched) {  
+                    printf("\nEnter your current password: ");  
+                    scanf("%s", oldPassword);  
+
+                    if (strcmp(oldPassword, user->password) != 0) {  
+                        printf("Incorrect password! Please try again.\n");  
+                    } else {  
+                        passwordMatched = 1;  
+                    }  
+                }  
+
+                int passwordConfirmed = 0;  
+                while (!passwordConfirmed) {  
+                    printf("\nEnter new password (at least 6 characters): ");  
+                    scanf("%s", newPassword);  
+                    if (strlen(newPassword) < 6) {  
+                        printf("Password must be at least 6 characters long!\n");  
+                        continue;  
+                    }  
+                    printf("Re-enter new password: ");  
+                    scanf("%s", confirmPassword);  
+
+                    if (strcmp(newPassword, confirmPassword) != 0) {  
+                        printf("Passwords do not match! Please try again.\n");  
+                    } else {  
+                        // Cập nhật mật khẩu mới  
+                        strcpy(user->password, newPassword);  
+                        saveUserData(); // Lưu mật khẩu mới  
+                        passwordConfirmed = 1;  
+                    }  
+                }  
+
+                printf("Password updated successfully!\n");  
+                break;  
+            }  
+
+            case 2: { // Cập nhật thông tin cá nhân  
+                char temp[100];  
+                printf("\nCurrent Information:\n");  
+                printf("Name: %s\n", user->name);  
+                printf("Email: %s\n", user->email);  
+                printf("Phone: %s\n", user->phone);  
+                printf("(Your current password is your phone number)\n");  
+ 
+                do {  
+                    printf("\nEnter new Name (or press Enter to keep current): ");  
+                    fgets(temp, sizeof(temp), stdin);  
+                    temp[strcspn(temp, "\n")] = 0;  
+                    if (strlen(temp) > 0) {  // Chỉ cập nhật nếu tên không để trống  
+                        if (!isValidName(temp)) {  
+                            printf("Name cannot contain numbers!\n");  
+                            continue;  
+                        }  
+                        strcpy(user->name, temp);  
+                    }  
+                } while (strlen(temp) == 0 && printf("Name cannot be empty! Please enter again.\n"));  
+
+                // Cập nhật email  
+                do {  
+                    printf("Enter new Email (or press Enter to keep current): ");  
+                    fgets(temp, sizeof(temp), stdin);  
+                    temp[strcspn(temp, "\n")] = 0;
+                    if (strlen(temp) > 0) {  
+                        if (strchr(temp, '@') != NULL && strchr(temp, '.') != NULL) {  
+                            strcpy(user->email, temp);  
+                        } else {  
+                            printf("❌ Invalid email format! Please enter again.\n");  
+                        }  
+                    }  
+                } while (strlen(temp) == 0 || (strchr(temp, '@') == NULL || strchr(temp, '.') == NULL));  
+
+                do {  
+                    printf("Enter new Phone (or press Enter to keep current): ");  
+                    fgets(temp, sizeof(temp), stdin);  
+                    temp[strcspn(temp, "\n")] = 0;  
+                    if (strlen(temp) > 0) {  
+                        if (isValidPhone(temp)) {  
+                            strcpy(user->phone, temp);  
+                        } else {  
+                            printf("Phone number must be a valid number and less than or equal to 12 digits!\n");  
+                        }  
+                    }  
+                } while (strlen(temp) > 0 && !isValidPhone(temp));  
+ 
+                saveUserData();  
+                printf("Information updated successfully!\n");  
+                break;  
+            }  
+
+            case 3:  
+                printf("Exiting Edit Menu...\n");  
+                break;  
+
+            default:  
+                printf("Invalid choice! Please try again.\n");  
+        }  
+    } while (choice != 3);  
+}  
+
+
+
+
+
 
 int isValidUserId(const char *userId) {
     for (int i = 0; i < strlen(userId); i++) {
@@ -27,23 +219,21 @@ int isValidName(const char *name) {
     return 1;
 }
 
-// Hàm kiểm tra số điện thoại có hợp lệ không (chỉ chứa số và không dài quá 12 ký tự)
 int isValidPhone(const char *phone) {
-    if (strlen(phone) > 12) return 0;  // Kiểm tra chiều dài
+    if (strlen(phone) > 12) return 0;
     for (int i = 0; i < strlen(phone); i++) {
         if (!isdigit(phone[i])) {
-            return 0;  // Nếu có ký tự không phải số, trả về false
+            return 0; 
         }
     }
-    return 1;  // Nếu tất cả các ký tự đều là số, trả về true
+    return 1; 
 }
-// Định nghĩa mảng users và biến userCount
 
 
 void cleanString(char *str) {
     for (int i = 0; str[i]; i++) {
         if (str[i] == '|') {
-            str[i] = '_';  // Thay thế ký tự '|' bằng '_'
+            str[i] = '_';
         }
     }
 }
@@ -56,17 +246,15 @@ void saveUserData() {
     }
 
     for (int i = 0; i < userCount; i++) {
-        fprintf(file, "USER|%s|%s|%02d-%02d-%04d|%d|%s|%s|%d|%s|%.2f|%s\n",
+        fprintf(file, "USER|%s|%s|%02d-%02d-%04d|%d|%s|%s|%d|%s|%.2f|\n",
                 users[i].userId, users[i].name,
                 users[i].dateOfBirth.day, users[i].dateOfBirth.month, users[i].dateOfBirth.year,
                 users[i].gender, users[i].phone, users[i].email,
                 users[i].status, users[i].password,
-                users[i].balance, users[i].username);
+                users[i].balance);
 
         for (int j = 0; j < 100; j++) {
             if (users[i].transactionHistory[j].amount > 0) {
-                cleanString(users[i].transactionHistory[j].type);
-                cleanString(users[i].transactionHistory[j].message);
                 fprintf(file, "TRANSACTION|%s|%s|%.2f|%s|%s|%02d-%02d-%04d\n",
                         users[i].transactionHistory[j].transferId,
                         users[i].transactionHistory[j].receivingId,
@@ -84,6 +272,8 @@ void saveUserData() {
     printf("User data saved successfully!\n");
 }
 
+
+
 void loadUserData() {
     FILE *file = fopen("data/user.txt", "r");
     if (!file) {
@@ -91,7 +281,7 @@ void loadUserData() {
         return;
     }
 
-    char line[256];
+    char line[512];
     userCount = 0;
     struct User tempUser;
     int transactionIndex = 0;
@@ -101,12 +291,12 @@ void loadUserData() {
         sscanf(line, "%[^|]", type);
 
         if (strcmp(type, "USER") == 0) {
-            sscanf(line, "USER|%[^|]|%[^|]|%d-%d-%d|%d|%[^|]|%[^|]|%d|%[^|]|%f|%[^|]",
+            sscanf(line, "USER|%[^|]|%[^|]|%d-%d-%d|%d|%[^|]|%[^|]|%d|%[^|]|%f|",
                    tempUser.userId, tempUser.name,
                    &tempUser.dateOfBirth.day, &tempUser.dateOfBirth.month, &tempUser.dateOfBirth.year,
                    &tempUser.gender, tempUser.phone, tempUser.email,
                    &tempUser.status, tempUser.password,
-                   &tempUser.balance, tempUser.username);
+                   &tempUser.balance);
 
             users[userCount] = tempUser;
             transactionIndex = 0;
@@ -129,36 +319,42 @@ void loadUserData() {
     printf("User data loaded successfully! Found %d users.\n", userCount);
 }
 
-void displayUserList() {
-    printf("\n*** User List ***\n");
-    printf("===============================================================================================================\n");
-    printf("| %-10s | %-20s | %-25s | %-12s | %-14s | %-6s |\n", "ID", "Name", "Email", "Phone", "Date of Birth", "Status");
-    printf("---------------------------------------------------------------------------------------------------------------\n");
 
-    for (int i = 0; i < userCount; i++) {
-        printf("| %-10s | %-20s | %-25s | %-12s | %02d-%02d-%04d | %-10s |\n",
-               users[i].userId,
-               users[i].name,
-               users[i].email,
-               users[i].phone,
-               users[i].dateOfBirth.day, users[i].dateOfBirth.month, users[i].dateOfBirth.year,
-               users[i].status ? "Locked" : "Open");
-    }
 
-    printf("===============================================================================================================\n");
+void displayUserList() {  
+    printf("\n*** User List ***\n");  
+    printf("===============================================================================================================\n");  
+    printf("| %-10s | %-20s | %-25s | %-12s | %-14s | %-6s |\n", "ID", "Name", "Email", "Phone", "Date of Birth", "Status");  
+    printf("---------------------------------------------------------------------------------------------------------------\n");  
 
-    int choice;
-    printf("\n[1] Return to Admin Menu\n");
-    printf("[0] Exit\n");
-    printf("Enter choice: ");
-    scanf("%d", &choice);
-    
-    if (choice == 0) {
-        saveUserData();
-        exit(0);
-    } else {
-        system("cls");
-    }
+    for (int i = 0; i < userCount; i++) {  
+        printf("| %-10s | %-20s | %-25s | %-12s | %02d-%02d-%04d | %-10s |\n",  
+               users[i].userId,  
+               users[i].name,  
+               users[i].email,  
+               users[i].phone,  
+               users[i].dateOfBirth.day, users[i].dateOfBirth.month, users[i].dateOfBirth.year,  
+               users[i].status ? "Locked" : "Open");  
+    }  
+
+    printf("===============================================================================================================\n");  
+
+    int choice;  
+    do {  
+        printf("[1] Return to Admin Menu\n");  
+        printf("[0] Exit\n");  
+        printf("Enter choice: ");  
+        scanf("%d", &choice);  
+
+        if (choice == 0) {  
+            printf("Exiting...\n");  
+            exit(0);
+        } else if (choice == 1) {  
+            break;
+        } else {  
+            printf("Invalid choice! Please try again.\n");  
+        }  
+    } while (choice != 0); 
 }
 
 void displayUserDetails(char *userId) {  
@@ -180,8 +376,6 @@ void displayUserDetails(char *userId) {
             printf("\n--- Account Information ---\n");  
             printf("Balance      : %.2f\n", users[i].balance);  
             printf("Username     : %s\n", users[i].username);  
-
-            // Removed Transaction History section  
 
             found = 1;  
             break;  
@@ -234,83 +428,80 @@ bool isDuplicateUser(struct User user) {
     return false;
 }
 
-void addUser() {
-    struct User newUser;
-    int valid = 0;
+void addUser() {  
+    struct User newUser;  
+    int valid = 0;  
     
-    while (!valid) {  // Tiếp tục yêu cầu nhập nếu dữ liệu không hợp lệ
-        printf("Enter Name: ");
-        getchar();  // Để bỏ qua ký tự thừa
-        fgets(newUser.name, sizeof(newUser.name), stdin);
-        newUser.name[strcspn(newUser.name, "\n")] = 0;  // Loại bỏ ký tự newline
+    while (!valid) {  
+        printf("Enter Name: ");  
+        getchar(); 
+        fgets(newUser.name, sizeof(newUser.name), stdin);  
+        newUser.name[strcspn(newUser.name, "\n")] = 0;  
 
-        // Kiểm tra tên có chứa số không
-        if (strlen(newUser.name) == 0) {
-            printf("Name cannot be empty!\n");
-            continue;
-        }
-        if (!isValidName(newUser.name)) {
-            printf("Name cannot contain numbers!\n");
-            continue;
-        }
+        if (strlen(newUser.name) == 0) {  
+            printf("Name cannot be empty!\n");  
+            continue;  
+        }  
+        if (!isValidName(newUser.name)) {  
+            printf("Name cannot contain numbers!\n");  
+            continue;  
+        }  
 
-        printf("Enter User ID: ");
-        fgets(newUser.userId, sizeof(newUser.userId), stdin);
-        newUser.userId[strcspn(newUser.userId, "\n")] = 0;
+        printf("Enter User ID: ");  
+        fgets(newUser.userId, sizeof(newUser.userId), stdin);  
+        newUser.userId[strcspn(newUser.userId, "\n")] = 0;  
 
-        // Kiểm tra User ID không chứa chữ
-        if (strlen(newUser.userId) == 0) {
-            printf("User ID cannot be empty!\n");
-            continue;
-        }
-        if (!isValidUserId(newUser.userId)) {
-            printf("User ID cannot contain letters!\n");
-            continue;
-        }
+        if (strlen(newUser.userId) == 0) {  
+            printf("User ID cannot be empty!\n");  
+            continue;  
+        }  
+        if (!isValidUserId(newUser.userId)) {  
+            printf("User ID cannot contain letters!\n");  
+            continue;  
+        }  
 
-        printf("Enter Phone: ");
-        fgets(newUser.phone, sizeof(newUser.phone), stdin);
-        newUser.phone[strcspn(newUser.phone, "\n")] = 0;
-        // Kiểm tra số điện thoại có hợp lệ không
-        if (strlen(newUser.phone) == 0 || !isValidPhone(newUser.phone)) {
-            printf("Phone number must be a valid number and less than or equal to 12 digits!\n");
-            continue;
-        }
+        printf("Enter Phone: ");  
+        fgets(newUser.phone, sizeof(newUser.phone), stdin);  
+        newUser.phone[strcspn(newUser.phone, "\n")] = 0;  
 
-        printf("Enter Email: ");
-        fgets(newUser.email, sizeof(newUser.email), stdin);
-        newUser.email[strcspn(newUser.email, "\n")] = 0;
-        if (strlen(newUser.email) == 0) {
-            printf("Email cannot be empty!\n");
-            continue;
-        }
+        if (strlen(newUser.phone) == 0 || !isValidPhone(newUser.phone)) {  
+            printf("Phone number must be a valid number and less than or equal to 12 digits!\n");  
+            continue;  
+        }  
 
-        // Nhập ngày sinh
-        printf("Enter Date of Birth (DD MM YYYY): ");
-        scanf("%d %d %d", &newUser.dateOfBirth.day, &newUser.dateOfBirth.month, &newUser.dateOfBirth.year);
+        printf("Enter Email: ");  
+        fgets(newUser.email, sizeof(newUser.email), stdin);  
+        newUser.email[strcspn(newUser.email, "\n")] = 0;  
+        if (strlen(newUser.email) == 0) {  
+            printf("Email cannot be empty!\n");  
+            continue;  
+        }  
+
+        // Nhập ngày sinh  
+        printf("Enter Date of Birth (DD MM YYYY): ");  
+        scanf("%d %d %d", &newUser.dateOfBirth.day, &newUser.dateOfBirth.month, &newUser.dateOfBirth.year);  
         
-        if (newUser.dateOfBirth.year < 1900 || newUser.dateOfBirth.year > 2025 || 
-            newUser.dateOfBirth.month < 1 || newUser.dateOfBirth.month > 12 || 
-            newUser.dateOfBirth.day < 1 || newUser.dateOfBirth.day > 31) {
-            printf("Invalid date of birth!\n");
-            continue;
-        }
+        if (newUser.dateOfBirth.year < 1900 || newUser.dateOfBirth.year > 2025 ||   
+            newUser.dateOfBirth.month < 1 || newUser.dateOfBirth.month > 12 ||   
+            newUser.dateOfBirth.day < 1 || newUser.dateOfBirth.day > 31) {  
+            printf("Invalid date of birth!\n");  
+            continue;  
+        }  
 
-        // Kiểm tra dữ liệu người dùng đã hợp lệ, thoát khỏi vòng lặp
-        valid = 1;
-    }
+        valid = 1; // Dữ liệu hợp lệ  
+    }  
 
-    newUser.status = 0;  // Mặc định người dùng mới có trạng thái "Mở"
-    strcpy(newUser.password, newUser.phone);  // Mật khẩu mặc định là số điện thoại
+    newUser.status = 0;  // Trạng thái "Mở"  
+    strcpy(newUser.password, newUser.phone);  // Mật khẩu mặc định là số điện thoại  
 
-    if (isDuplicateUser(newUser)) {
-        printf("User ID, phone number, or email is already taken!\n");
-        return;
-    }
+    if (isDuplicateUser(newUser)) {  
+        printf("User ID, phone number, or email is already taken!\n");  
+        return;  
+    }  
     
-    users[userCount++] = newUser;  // Thêm người dùng vào danh sách
-    saveUserData();  // Lưu dữ liệu vào file
-    printf("User added successfully!\n");
+    users[userCount++] = newUser;  // Thêm người dùng vào danh sách  
+    saveUserData();  // Lưu dữ liệu vào file  
+    printf("User added successfully!\n");  
 }
 
 
