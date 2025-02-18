@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "datatype.h"
-#include <ctype.h>  // Thêm thư viện này để sử dụng isdigit
+#include <ctype.h>
 
 struct User users[100];
 int userCount = 0;
@@ -11,21 +11,20 @@ int userCount = 0;
 
 int isValidUserId(const char *userId) {
     for (int i = 0; i < strlen(userId); i++) {
-        if (isalpha(userId[i])) {  // Nếu có ký tự là chữ, trả về false
+        if (isalpha(userId[i])) { 
             return 0;
         }
     }
-    return 1;  // Nếu tất cả đều không phải chữ, trả về true
+    return 1;
 }
 
-// Hàm kiểm tra tên có hợp lệ không (không chứa số)
 int isValidName(const char *name) {
     for (int i = 0; i < strlen(name); i++) {
         if (isdigit(name[i])) {
-            return 0;  // Nếu có ký tự số, trả về false
+            return 0;
         }
     }
-    return 1;  // Nếu tất cả các ký tự đều là chữ, trả về true
+    return 1;
 }
 
 // Hàm kiểm tra số điện thoại có hợp lệ không (chỉ chứa số và không dài quá 12 ký tự)
@@ -162,53 +161,36 @@ void displayUserList() {
     }
 }
 
-void displayUserDetails(char *userId) {
-    int found = 0;
+void displayUserDetails(char *userId) {  
+    int found = 0;  
 
-    for (int i = 0; i < userCount; i++) {
-        if (strcmp(users[i].userId, userId) == 0) {
-            printf("\n================ User Details ================\n");
-            printf("User ID      : %s\n", users[i].userId);
-            printf("Name         : %s\n", users[i].name);
-            printf("Email        : %s\n", users[i].email);
-            printf("Phone        : %s\n", users[i].phone);
-            printf("Status       : %s\n", users[i].status ? "Locked" : "Open");
-            printf("Date of Birth: %02d-%02d-%04d\n",
-                   users[i].dateOfBirth.day,
-                   users[i].dateOfBirth.month,
-                   users[i].dateOfBirth.year);
+    for (int i = 0; i < userCount; i++) {  
+        if (strcmp(users[i].userId, userId) == 0) {  
+            printf("\n================ User Details ================\n");  
+            printf("User ID      : %s\n", users[i].userId);  
+            printf("Name         : %s\n", users[i].name);  
+            printf("Email        : %s\n", users[i].email);  
+            printf("Phone        : %s\n", users[i].phone);  
+            printf("Status       : %s\n", users[i].status ? "Locked" : "Open");  
+            printf("Date of Birth: %02d-%02d-%04d\n",  
+                   users[i].dateOfBirth.day,  
+                   users[i].dateOfBirth.month,  
+                   users[i].dateOfBirth.year);  
 
-            printf("\n--- Account Information ---\n");
-            printf("Balance      : %.2f\n", users[i].balance);
-            printf("Username     : %s\n", users[i].username);
+            printf("\n--- Account Information ---\n");  
+            printf("Balance      : %.2f\n", users[i].balance);  
+            printf("Username     : %s\n", users[i].username);  
 
-            printf("\n--- Transaction History ---\n");
-            printf("| %-10s | %-10s | %-8s | %-15s | %-10s |\n",
-                   "Sender", "Receiver", "Amount", "Type", "Date");
-            printf("---------------------------------------------------------\n");
+            // Removed Transaction History section  
 
-            for (int j = 0; j < 100; j++) {
-                if (users[i].transactionHistory[j].amount > 0) {
-                    printf("| %-10s | %-10s | %-8.2f | %-15s | %02d-%02d-%04d |\n",
-                           users[i].transactionHistory[j].transferId,
-                           users[i].transactionHistory[j].receivingId,
-                           users[i].transactionHistory[j].amount,
-                           users[i].transactionHistory[j].type,
-                           users[i].transactionHistory[j].transactionDate.day,
-                           users[i].transactionHistory[j].transactionDate.month,
-                           users[i].transactionHistory[j].transactionDate.year);
-                }
-            }
-            printf("---------------------------------------------------------\n");
+            found = 1;  
+            break;  
+        }  
+    }  
 
-            found = 1;
-            break;
-        }
-    }
-
-    if (!found) {
-        printf("No user found with ID: %s\n", userId);
-    }
+    if (!found) {  
+        printf("No user found with ID: %s\n", userId);  
+    }  
 }
 
 
