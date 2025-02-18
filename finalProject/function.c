@@ -90,48 +90,48 @@ void editUserInfo(struct User *user) {
         scanf("%d", &choice);  
         getchar(); 
 
-        switch (choice) {  
-            case 1: { // Đổi mật khẩu  
-                char oldPassword[20], newPassword[20], confirmPassword[20];  
-                int passwordMatched = 0;  
+        switch (choice) {
+            case 1: { // Đổi mật khẩu
+                char oldPassword[20], newPassword[20], confirmPassword[20];
+                int passwordMatched = 0;
 
-                printf("\nYour current password is your phone number.\n");  
+                printf("\nYour current password is your phone number.\n");
 
-                while (!passwordMatched) {  
-                    printf("\nEnter your current password: ");  
-                    scanf("%s", oldPassword);  
+                while (!passwordMatched) {
+                    printf("\nEnter your current password: ");
+                    scanf("%s", oldPassword);
 
-                    if (strcmp(oldPassword, user->password) != 0) {  
-                        printf("Incorrect password! Please try again.\n");  
-                    } else {  
-                        passwordMatched = 1;  
-                    }  
-                }  
+                    if (strcmp(oldPassword, user->password) != 0) {
+                        printf("Incorrect password! Please try again.\n");
+                    } else {
+                        passwordMatched = 1;
+                    }
+                }
 
-                int passwordConfirmed = 0;  
-                while (!passwordConfirmed) {  
-                    printf("\nEnter new password (at least 6 characters): ");  
-                    scanf("%s", newPassword);  
-                    if (strlen(newPassword) < 6) {  
-                        printf("Password must be at least 6 characters long!\n");  
-                        continue;  
-                    }  
-                    printf("Re-enter new password: ");  
-                    scanf("%s", confirmPassword);  
+                int passwordConfirmed = 0;
+                while (!passwordConfirmed) {
+                    printf("\nEnter new password (at least 6 characters): ");
+                    scanf("%s", newPassword);
+                    if (strlen(newPassword) < 6) {
+                        printf("Password must be at least 6 characters long!\n");
+                        continue;
+                    }
+                    printf("Re-enter new password: ");
+                    scanf("%s", confirmPassword);
 
-                    if (strcmp(newPassword, confirmPassword) != 0) {  
-                        printf("Passwords do not match! Please try again.\n");  
-                    } else {  
-                        // Cập nhật mật khẩu mới  
-                        strcpy(user->password, newPassword);  
-                        saveUserData(); // Lưu mật khẩu mới  
-                        passwordConfirmed = 1;  
-                    }  
-                }  
+                    if (strcmp(newPassword, confirmPassword) != 0) {
+                        printf("Passwords do not match! Please try again.\n");
+                    } else {
+                        // Cập nhật mật khẩu mới
+                        strcpy(user->password, newPassword);
+                        saveUserData(); // Lưu mật khẩu mới
+                        passwordConfirmed = 1;
+                    }
+                }
 
-                printf("Password updated successfully!\n");  
-                break;  
-            }  
+                printf("Password updated successfully!\n");
+                break;
+            }
 
             case 2: { // Cập nhật thông tin cá nhân  
                 char temp[100];  
@@ -163,7 +163,7 @@ void editUserInfo(struct User *user) {
                         if (strchr(temp, '@') != NULL && strchr(temp, '.') != NULL) {  
                             strcpy(user->email, temp);  
                         } else {  
-                            printf("❌ Invalid email format! Please enter again.\n");  
+                            printf("Invalid email format! Please enter again.\n");  
                         }  
                     }  
                 } while (strlen(temp) == 0 || (strchr(temp, '@') == NULL || strchr(temp, '.') == NULL));  
@@ -195,9 +195,6 @@ void editUserInfo(struct User *user) {
         }  
     } while (choice != 3);  
 }  
-
-
-
 
 
 
@@ -500,8 +497,7 @@ void addUser() {
     }  
     
     users[userCount++] = newUser;  // Thêm người dùng vào danh sách  
-    saveUserData();  // Lưu dữ liệu vào file  
-    printf("User added successfully!\n");  
+    saveUserData();  // Lưu dữ liệu vào file   
 }
 
 

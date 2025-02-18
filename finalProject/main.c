@@ -3,7 +3,7 @@
 #include <string.h>
 #include "function.h"
 #include <conio.h>
- 
+
 void inputPassword(char* password, int maxLength) {
     char ch;
     int i = 0;
@@ -106,29 +106,35 @@ int main() {
                         printf("Invalid choice! Please try again.\n");  
                 }  
             } while (choice != 7);  
-        } else if (role == 2) {  // User login  
-    char email[50], phone[12];
-    printf("\nEnter Email: ");
-    scanf("%s", email);
-    printf("Enter Pass: ");
-    inputPassword(phone, sizeof(phone));
+        } else if (role == 2) {  // User login
+            char email[50], password[20];
+            printf("\nEnter Email: ");
+            scanf("%s", email);
+            printf("Enter Pass: ");
+            scanf("%s", password);
 
-    struct User *loggedInUser = NULL;
-    for (int i = 0; i < userCount; i++) {
-        if (strcmp(users[i].email, email) == 0 && strcmp(users[i].phone, phone) == 0) {
-            loggedInUser = &users[i];
-            printf("\nLogin Successful!\n");
+            struct User *loggedInUser = NULL;
+            for (int i = 0; i < userCount; i++) {
+                if (strcmp(users[i].email, email) == 0 && strcmp(users[i].password, password) == 0) {
+                    loggedInUser = &users[i];
+                    printf("\nLogin Successful!\n");
+                    break;
+                }
+            }
+
+            if (loggedInUser == NULL) {
+                printf("Invalid login. Please check your email and phone number.\n");
+            } else if (loggedInUser->status) {
+                printf("Your account is locked.\n");
+            } else {
+                displayAccountMenu(loggedInUser);
+            }
+        } else if (role == 0) {
+            printf("Exiting system...\n");
             break;
+        } else {
+            printf("Invalid choice! Please try again.\n");
         }
-    }
-
-    if (loggedInUser == NULL) {
-        printf("Invalid login. Please check your email and phone number.\n");
-    } else if (loggedInUser->status) {
-        printf("Your account is locked.\n");
-    } else {
-        displayAccountMenu(loggedInUser);
-    }
-}
     }  
+    return 0;
 }
