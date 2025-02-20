@@ -29,7 +29,7 @@ void transferMoney(struct User *sender) {
             break;
         }
     }
-
+	// ko tim thay nguoi nhan = out
     if (receiver == NULL) {
         printf("Error: Receiver's account does not exist.\n");
         return;
@@ -38,11 +38,12 @@ void transferMoney(struct User *sender) {
     printf("Enter the amount to transfer: ");
     scanf("%lf", &amount);
     
+    //kt so tien phai > 0
     if (amount <= 0) {
         printf("Amount must be greater than zero.\n");
         return;
     }
-
+	//kt tai so du tai khoan
     if (amount > sender->balance) {
         printf("Insufficient funds.\n");
         return;
@@ -76,7 +77,7 @@ void transferMoney(struct User *sender) {
     strcpy(receiverTransaction.transferId, transferId);
     strcpy(receiverTransaction.type, "transfer");
     receiverTransaction.amount = amount;
-    receiverTransaction.transactionDate = (struct Date){ 18, 2, 2025 };  // Set the current date, can be dynamic
+    receiverTransaction.transactionDate = (struct Date){ 18, 2, 2025 };  
     strcpy(receiverTransaction.message, "Received from: ");
     strcat(receiverTransaction.message, sender->userId);
 
@@ -96,6 +97,7 @@ void transferMoney(struct User *sender) {
 }
 
 
+// ham nap tien vào tk
 void depositMoney(struct User *user) {
     double amount;
     char transferId[10];
@@ -130,6 +132,7 @@ void depositMoney(struct User *user) {
 }
 
 
+// ham rut tien tu tk
 void withdrawMoney(struct User *user) {
     double amount;
     char transferId[10];
@@ -144,12 +147,12 @@ void withdrawMoney(struct User *user) {
         printf("Amount must be greater than zero.\n");
         return;
     }
-
+	//kt so tien muon rut
     if (amount > user->balance) {
         printf("Insufficient funds.\n");
         return;
     }
-
+	//cap nhat so du
     user->balance -= amount;
 
     struct Transaction newTransaction;
@@ -170,7 +173,7 @@ void withdrawMoney(struct User *user) {
 }
 
 
-
+// menu tai khoan nguoi dung
 void displayAccountMenu(struct User *loggedInUser) {
     int choice;
     do {
@@ -179,7 +182,7 @@ void displayAccountMenu(struct User *loggedInUser) {
         printf("[1] View Account Details\n");
         printf("[2] Deposit Money\n");
         printf("[3] Withdraw Money\n");
-        printf("[4] Transfer Money\n");  // Thêm chức năng chuyển tiền
+        printf("[4] Transfer Money\n"); 
         printf("[5] Edit Personal Information\n");
         printf("[6] Exit\n");
         printf("===================================\n");
@@ -201,7 +204,7 @@ void displayAccountMenu(struct User *loggedInUser) {
                 break;
             case 4:
                 system("cls");
-                transferMoney(loggedInUser);  // Thực hiện chuyển tiền
+                transferMoney(loggedInUser);  
                 break;
             case 5:
                 system("cls");
@@ -217,7 +220,7 @@ void displayAccountMenu(struct User *loggedInUser) {
 }
 
 
-
+//thong tin chi tiet tk user
 void displayAccountDetails(struct User *user) {
     printf("\n================ Account Details ================\n");
     printf("User ID      : %s\n", user->userId);
@@ -226,7 +229,6 @@ void displayAccountDetails(struct User *user) {
     printf("Phone        : %s\n", user->phone);
     printf("Status       : %s\n", user->status ? "Locked" : "Open");
     printf("Balance      : %.2f\n", user->balance);
-    printf("Username     : %s\n", user->username);
 
     printf("\n--- Transaction History ---\n");
     printf("===============================================\n");
@@ -254,7 +256,7 @@ void displayAccountDetails(struct User *user) {
 }
 
 
-
+//ham sua doi tt user
 void editUserInfo(struct User *user) {  
     int choice;  
     do {  
@@ -272,21 +274,24 @@ void editUserInfo(struct User *user) {
         switch (choice) {
             case 1: {
                 char oldPassword[20], newPassword[20], confirmPassword[20];
-                int passwordMatched = 0;
+                int passwordMatched = 0; // kt mat khau hien tai dung hay ko
 
-                printf("\nYour current password is your phone number.\n");
-
+                printf(".\n");
+				
+				//kt mat khau hien tai
                 while (!passwordMatched) {
                     printf("\nEnter your current password: ");
                     scanf("%s", oldPassword);
-
+					
+					//ss mat khau cu va mk nhap vao
                     if (strcmp(oldPassword, user->password) != 0) {
                         printf("Incorrect password! Please try again.\n");
                     } else {
-                        passwordMatched = 1;
+                        passwordMatched = 1; // nhap dung gán gt 1 va ket thuc vlap
                     }
                 }
-
+				
+				//nhap mk moi va xac nhan
                 int passwordConfirmed = 0;
                 while (!passwordConfirmed) {
                     printf("\nEnter new password (at least 6 characters): ");
@@ -312,18 +317,20 @@ void editUserInfo(struct User *user) {
             }
 
             case 2: {
-                char temp[100];  
+                char temp[100];  // luu tru thong tin tam thoi khi nguoi dung nhap tt moi
                 printf("\nCurrent Information:\n");  
                 printf("Name: %s\n", user->name);  
                 printf("Email: %s\n", user->email);  
-                printf("Phone: %s\n", user->phone);  
-                printf("(Your current password is your phone number)\n");  
+                printf("Phone: %s\n", user->phone);   
  
                 do {  
-                    printf("\nEnter new Name (or press Enter to keep current): ");  
+                    printf("\nEnter new Name (or press Enter to keep current): ");
+					//Hàm fgets đọc chuỗi từ bàn phím và lưu vào temp.
+					// Nếu người dùng không nhập gì và chỉ nhấn Enter, temp sẽ là chuỗi rỗng.  
                     fgets(temp, sizeof(temp), stdin);  
                     temp[strcspn(temp, "\n")] = 0;  
                     if (strlen(temp) > 0) { 
+                    //kiểm tra nếu tên không chứa số bằng cách gọi hàm isValidName(temp)
                         if (!isValidName(temp)) {  
                             printf("Name cannot contain numbers!\n");  
                             continue;  
@@ -337,6 +344,7 @@ void editUserInfo(struct User *user) {
                     fgets(temp, sizeof(temp), stdin);  
                     temp[strcspn(temp, "\n")] = 0;
                     if (strlen(temp) > 0) {  
+                    	// tim kiem ki tu @ . trong chuoi
                         if (strchr(temp, '@') != NULL && strchr(temp, '.') != NULL) {  
                             strcpy(user->email, temp);  
                         } else {  
@@ -374,6 +382,23 @@ void editUserInfo(struct User *user) {
 }  
 
 
+int isValidPhone(const char *phone) {
+    // Kiểm tra xem số điện thoại có bắt đầu bằng số 0 không và có độ dài là 10 ký tự
+    if (strlen(phone) != 10 || phone[0] != '0') {
+        return 0;  // Nếu không thỏa mãn, trả về false (0)
+    }
+
+    // Kiểm tra xem tất cả các ký tự trong số điện thoại có phải là số không
+    for (int i = 0; i < strlen(phone); i++) {
+        if (!isdigit(phone[i])) {
+            return 0;  // Nếu có ký tự không phải là số, trả về false (0)
+        }
+    }
+
+    return 1;  // Nếu tất cả các điều kiện đều thỏa mãn, trả về true (1)
+}
+
+
 
 int isValidUserId(const char *userId) {
     for (int i = 0; i < strlen(userId); i++) {
@@ -386,6 +411,7 @@ int isValidUserId(const char *userId) {
 
 int isValidName(const char *name) {
     for (int i = 0; i < strlen(name); i++) {
+    	//1-9 neu co ki tu tra ve true =>>> ko hop le
         if (isdigit(name[i])) {
             return 0;
         }
@@ -393,15 +419,6 @@ int isValidName(const char *name) {
     return 1;
 }
 
-int isValidPhone(const char *phone) {
-    if (strlen(phone) > 12) return 0;
-    for (int i = 0; i < strlen(phone); i++) {
-        if (!isdigit(phone[i])) {
-            return 0; 
-        }
-    }
-    return 1; 
-}
 
 
 void cleanString(char *str) {
@@ -412,13 +429,14 @@ void cleanString(char *str) {
     }
 }
 
+//luu du lieu nguuoi dung vao file user.txt
 void saveUserData() {
     FILE *file = fopen("data/user.txt", "w");
     if (!file) {
         printf("Error: Could not open file for writing.\n");
         return;
     }
-
+	//Lưu dữ liệu người dùng
     for (int i = 0; i < userCount; i++) {
         fprintf(file, "USER|%s|%s|%02d-%02d-%04d|%d|%s|%s|%d|%s|%.2f|\n",
                 users[i].userId, users[i].name,
@@ -426,7 +444,7 @@ void saveUserData() {
                 users[i].gender, users[i].phone, users[i].email,
                 users[i].status, users[i].password,
                 users[i].balance);
-
+		//Lưu lịch sử giao dịch của mỗi người dùng
         for (int j = 0; j < 100; j++) {
             if (users[i].transactionHistory[j].amount > 0) {
                 fprintf(file, "TRANSACTION|%s|%s|%.2f|%s|%s|%02d-%02d-%04d\n",
@@ -448,6 +466,13 @@ void saveUserData() {
 
 
 
+	//r	Mở các file đã tồn tại với mục đích đọc
+	//w		Mở các file với mục đích ghi. Nếu các file này chưa tồn tại thi file mới được tạo ra. Ở đây, chương trình bắt đầu ghi nội dung từ phần mở đầu của file
+	//a		Mở file văn bản cho việc ghi ở chế độ ghi tiếp theo vào cuối, nếu nó chưa tồn tại thì file mới được tạo. Đây là chương trình ghi nội dung với phần cuối của file đã tồn tại.
+	//r+	Mở file văn bản với mục đích đọc và ghi.
+	//w+	Mở một file văn bản cho chế độ đọc và ghi. Nó làm trắng file đã tồn tại nếu file này có và tạo mới nếu file này chưa có.
+	//a+	Mở file đã tồn tại với mục đích đọc và ghi. Nó tạo file mới nếu không tồn tại. Việc đọc file sẽ bắt đầu đọc từ đầu nhưng ghi file sẽ chỉ ghi vào cuối file.
+
 
 
 void loadUserData() {
@@ -459,7 +484,9 @@ void loadUserData() {
 
     char line[512];
     userCount = 0;
+    //lưu trữ dữ liệu của mỗi người dùng trong quá trình đọc từ file.
     struct User tempUser;
+    //chỉ số của giao dịch hiện tại trong mảng transactionHistory
     int transactionIndex = 0;
 
     while (fgets(line, sizeof(line), file)) {
@@ -496,7 +523,7 @@ void loadUserData() {
 }
 
 
-
+//hien thi ds user
 void displayUserList() {  
     printf("\n*** User List ***\n");  
     printf("===============================================================================================================\n");  
@@ -533,7 +560,9 @@ void displayUserList() {
     } while (choice != 0); 
 }
 
+//hien thi tt nguoi dung thong qua id
 void displayUserDetails(char *userId) {  
+	//kt xem co tim thay id trong mang chua
     int found = 0;  
 
     for (int i = 0; i < userCount; i++) {  
@@ -563,11 +592,13 @@ void displayUserDetails(char *userId) {
     }  
 }
 
-
+//kiểm tra xem chuỗi input có độ dài hợp lệ hay không
 bool isValidLength(const char *input, int maxLength) {
     return strlen(input) > 0 && strlen(input) <= maxLength;
 }
 
+
+//tim kiem user theo ten
 void searchUserByName(char *name) {
     printf("Searching for '%s'...\n", name);
     int found = 0;
@@ -576,12 +607,14 @@ void searchUserByName(char *name) {
     printf("----------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < userCount; i++) {
+    	// tìm kiếm chuỗi con trong chuỗi lớn
         if (strstr(users[i].name, name) != NULL) {
             printf("| %-10s | %-20s | %-25s | %-12s | %-6s |\n",
                    users[i].userId,
                    users[i].name,
                    users[i].email,
                    users[i].phone,
+                   //status == 1, in ra "Locked"; nếu status == 0, in ra "Open".
                    users[i].status ? "Locked" : "Open");
             found = 1;
         }
@@ -592,8 +625,11 @@ void searchUserByName(char *name) {
     printf("========================================================================================\n");
 }
 
+//ham kt user trung lap
 bool isDuplicateUser(struct User user) {
     for (int i = 0; i < userCount; i++) {
+    	//àm này dùng để so sánh hai chuỗi ký tự (string)
+    	//Nếu hai chuỗi giống nhau, strcmp() sẽ trả về 0
         if (strcmp(users[i].userId, user.userId) == 0 || 
             strcmp(users[i].phone, user.phone) == 0 || 
             strcmp(users[i].email, user.email) == 0 || 
@@ -604,13 +640,16 @@ bool isDuplicateUser(struct User user) {
     return false;
 }
 
+//them user vao he thong
 void addUser() {  
     struct User newUser;  
+    //kt tinh hop le
     int valid = 0;  
     
     while (!valid) {  
         printf("Enter Name: ");  
         getchar(); 
+        //Hàm fgets() đảm bảo không vượt quá kích thước mảng newUser.name.
         fgets(newUser.name, sizeof(newUser.name), stdin);  
         newUser.name[strcspn(newUser.name, "\n")] = 0;  
 
@@ -665,7 +704,7 @@ void addUser() {
 
         valid = 1;
     }  
-
+//cai dat tt mac dinh
     newUser.status = 0;
     strcpy(newUser.password, newUser.phone);   
 
@@ -678,7 +717,7 @@ void addUser() {
     saveUserData();  
 }
 
-
+//thay doi status lock n unlock
 void toggleUserStatus() {
     char userId[10];
     printf("\n*** Lock (Unlock) a User ***\n");
@@ -686,12 +725,14 @@ void toggleUserStatus() {
     scanf("%s", userId);
 
     int found = 0;
+    //Duyệt qua danh sách người dùng và tìm kiếm người dùng theo ID
     for (int i = 0; i < userCount; i++) {
         if (strcmp(users[i].userId, userId) == 0) {
             found = 1;
             printf("User found: %s\n", userId);
             printf("Current Status: %s. Do you want to change the status? (y/n): ", users[i].status ? "Locked" : "Open");
 
+//lưu lựa chọn của người quản trị (y/n).
             char confirm;
             scanf(" %c", &confirm);  
             if (confirm == 'y' || confirm == 'Y') {
@@ -723,6 +764,7 @@ void toggleUserStatus() {
     }
 }
 
+//sap xep danh sach nguoi dung theo ID
 void sortUserList() {
     int choice;
     printf("\n*** Sort User List ***\n");
@@ -735,7 +777,7 @@ void sortUserList() {
 
     if (choice == 1) {
         for (int i = 0; i < userCount - 1; i++) {
-            for (int j = i + 1; j < userCount; j++) {
+            for (int j = i +  1; j < userCount; j++) {
                 if (strcmp(users[i].userId, users[j].userId) > 0) {
                     struct User temp = users[i];
                     users[i] = users[j];
